@@ -9,5 +9,7 @@ func InitRouter() *gin.Engine {
 	router := gin.Default()
 	//  新增员工路由
 	router.POST("/admin/employee", admin.Save)
+	router.GET("/admin/employee/page", admin.Page)
+	
 	return router
 }
