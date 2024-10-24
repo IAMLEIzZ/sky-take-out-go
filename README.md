@@ -1,0 +1,3 @@
+# 苍穹外卖 golang 版本
+## 涉及到的技术栈目前由 Gin + Gorm + Redis
+### 功能开发 ing...  
