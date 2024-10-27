@@ -10,6 +10,7 @@ func InitRouter() *gin.Engine {
 	//  新增员工路由
 	router.POST("/admin/employee", admin.Save)
 	router.GET("/admin/employee/page", admin.Page)
+	router.POST("/admin/employee/login", admin.Login)
 	
 	return router
 }

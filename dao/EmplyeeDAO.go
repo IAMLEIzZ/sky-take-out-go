@@ -44,3 +44,13 @@ func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee
 	err := query.Offset((page - 1) * size).Limit(size).Find(&employees).Error
 	return employees, total, err
 }
+
+// select user by username
+func GetByUsername(username string) (entity.Employee) {
+	employee := entity.Employee{}
+	query := db.DB.Model(&entity.Employee{})
+
+	query.Where("username = ?", username).First(&employee)
+
+	return employee
+}

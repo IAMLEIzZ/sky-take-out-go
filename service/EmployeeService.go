@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"log"
 	"sky-take-out-go/dao"
 	"sky-take-out-go/model/dto"
@@ -34,4 +35,30 @@ func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee
 	employs, total, err := dao.PageQuery(employeePageQueryDTO)
 
 	return employs, total, err
+}
+
+func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error){
+	username := employeeLoginDTO.Username
+	password := employeeLoginDTO.Password
+
+	employee := dao.GetByUsername(username)
+	// id nil => employee.IDNumber is ""
+	if employee.IDNumber == ""{
+		return employee, errors.New("账号不存在")
+	}
+
+	// if is not nil, password to md5hax
+	password = utils.Md5DigestAsHex(password)
+
+	if password != employee.Password {
+		// user password err
+		return employee, errors.New("密码错误")
+	}  
+
+	if employee.Status == 0 {
+		return employee, errors.New("账号已被锁定")
+	}
+
+	return employee, nil
+
 }

@@ -10,7 +10,7 @@ func main() {
 	db.InitDB()
 	// 路由初始化
 	r := router.InitRouter()
-	err := r.Run(":8080")
+	err := r.Run(":8081")
 
 	if err != nil {
 		panic(err)
