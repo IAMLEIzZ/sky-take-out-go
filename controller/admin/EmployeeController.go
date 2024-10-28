@@ -265,3 +265,15 @@ func EditPassword(c *gin.Context) {
 	})
 
 }
+
+// User Logout
+// PATH: /admin/employee/logout
+func EmpLogout(c *gin.Context) {
+	log.Println("INFO: " + "User Logout...")
+
+	c.JSON(http.StatusOK, common.Response{
+		Code: 1,
+		Data: nil,
+		Msg: nil,
+	})
+}
