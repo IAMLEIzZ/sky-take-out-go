@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"sky-take-out-go/model/dto"
-
 	"github.com/golang-jwt/jwt/v5"
 )
 
