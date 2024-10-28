@@ -70,11 +70,27 @@ func GetById(EmpId uint64) *entity.Employee {
 }
 
 func StartOrStop(Status int, EmpId uint64) error {
-	// equal a update 
-	employee := &entity.Employee{
-		ID: EmpId,
-		Status: Status,
+	// equal a update
+	employee := dao.GetById(EmpId) 
+	employee.Status = Status
+
+	err := dao.Update(employee)
+
+	return err
+}
+
+func EditPassword(empNewAndOldPwDTO *dto.EmpNewAndOldPwDTO) error {
+	// this obj have oldpw newpw and id
+	// check oldpw
+	employee := dao.GetById(empNewAndOldPwDTO.EmpId)
+
+	oldPw := utils.Md5DigestAsHex(empNewAndOldPwDTO.OldPassword)
+	if oldPw != employee.Password {
+		return errors.New("旧密码错误")
 	}
+
+	// update this emp
+	employee.Password = utils.Md5DigestAsHex(empNewAndOldPwDTO.NewPassword)
 
 	err := dao.Update(employee)
 

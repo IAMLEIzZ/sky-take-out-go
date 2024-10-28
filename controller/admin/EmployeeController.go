@@ -92,8 +92,8 @@ func Page(c *gin.Context) {
 type Cliams struct {
 	EmpId uint64	`json:"empId"`
 	jwt.RegisteredClaims
+	
 }
-
 
 // empolyee login
 // Path: /admin/employee/login	
@@ -217,4 +217,51 @@ func StartOrStop(c *gin.Context) {
 			Data: nil,
 			Msg: nil,
 	})
+}
+
+// Edit Password 
+// PATH: /admin/employee/editPassword
+func EditPassword(c *gin.Context) {
+	log.Println("INFO: " + "Edit Password")
+	var empEditPasswordDTO dto.EmpNewAndOldPwDTO 
+	// here request just oldPw and newPw
+	// so need get EmpID
+	err := c.ShouldBindJSON(&empEditPasswordDTO)
+	if empId, exsits := c.Get("EmpId"); exsits {
+		empEditPasswordDTO.EmpId = empId.(uint64)
+	} else {
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return	
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return	
+	}
+
+	err = service.EditPassword(&empEditPasswordDTO)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return	
+	}
+
+	c.JSON(http.StatusOK, common.Response{
+		Code: 1,
+		Data: nil,
+		Msg: nil,
+	})
+
 }

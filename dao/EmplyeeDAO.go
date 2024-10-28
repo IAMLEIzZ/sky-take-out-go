@@ -10,7 +10,7 @@ import (
 // 新增一个员工
 func Save(employee entity.Employee) error{
 
-	err := db.DB.Create(&employee)
+	err := db.DB.Debug().Create(&employee)
 
 	return err.Error
 }
@@ -28,7 +28,7 @@ func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee
 		size = 10
 	}
 
-	query := db.DB.Model(&entity.Employee{})
+	query := db.DB.Debug().Model(&entity.Employee{})
 
 	// 如果 name 不为空，进行模糊查询
 	if name := employeePageQueryDTO.Name; name != "" {
@@ -48,7 +48,7 @@ func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee
 // select user by username
 func GetByUsername(username string) (entity.Employee) {
 	employee := entity.Employee{}
-	query := db.DB.Model(&entity.Employee{})
+	query := db.DB.Debug().Model(&entity.Employee{})
 
 	query.Where("username = ?", username).First(&employee)
 
@@ -58,9 +58,9 @@ func GetByUsername(username string) (entity.Employee) {
 func GetById(EmpId uint64) *entity.Employee {
 	emplyee := &entity.Employee{}
 
-	query := db.DB.Model(&entity.Employee{})
+	query := db.DB.Debug().Model(&entity.Employee{})
 
-	query.Where("id = ?", EmpId).First(&emplyee)
+	query.Where("id = ?", EmpId).First(emplyee)
 
 	return emplyee
 }
@@ -68,6 +68,6 @@ func GetById(EmpId uint64) *entity.Employee {
 func Update(employee *entity.Employee) error {
 	query := db.DB.Debug().Model(&entity.Employee{})
 	// when status = 0
-	err := query.Where("id = ?", employee.ID).Select("status").Updates(employee)
+	err := query.Where("id = ?", employee.ID).Select("*").Updates(employee)
 	return err.Error
 }

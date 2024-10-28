@@ -14,10 +14,11 @@ func InitRouter() *gin.Engine {
 	//  新增员工路由
 	router.POST("/admin/employee", JwtHandler(), admin.Save)
 	router.GET("/admin/employee/page", JwtHandler(), admin.Page)
-	router.POST("/admin/employee/login", admin.Login)
+	router.POST("/admin/employee/login", JwtHandler(), admin.Login)
 	router.GET("/admin/employee/:id", JwtHandler(), admin.GetById)
 	router.POST("/admin/employee/status/:status", JwtHandler(), admin.StartOrStop)
-	
+	router.PUT("/admin/employee/editPassword", JwtHandler(), admin.EditPassword)	
+
 	return router
 }
 
@@ -44,6 +45,8 @@ func JwtHandler() gin.HandlerFunc {
 			context.Abort()
 			return 
 		} else {
+			// when JwtCheck, if check pass, we can trans EmpId to Context
+			context.Set("EmpId", claims.EmpId)
 			context.Next()
 		}
 	}
