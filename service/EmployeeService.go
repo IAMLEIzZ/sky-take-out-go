@@ -7,7 +7,6 @@ import (
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
 	"sky-take-out-go/utils"
-
 	"github.com/jinzhu/copier"
 )
 
@@ -37,13 +36,13 @@ func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee
 	return employs, total, err
 }
 
-func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error){
+func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error) {
 	username := employeeLoginDTO.Username
 	password := employeeLoginDTO.Password
 
 	employee := dao.GetByUsername(username)
 	// id nil => employee.IDNumber is ""
-	if employee.IDNumber == ""{
+	if employee.IDNumber == "" {
 		return employee, errors.New("账号不存在")
 	}
 
@@ -53,7 +52,7 @@ func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error){
 	if password != employee.Password {
 		// user password err
 		return employee, errors.New("密码错误")
-	}  
+	}
 
 	if employee.Status == 0 {
 		return employee, errors.New("账号已被锁定")
@@ -71,7 +70,7 @@ func GetById(EmpId uint64) *entity.Employee {
 
 func StartOrStop(Status int, EmpId uint64) error {
 	// equal a update
-	employee := dao.GetById(EmpId) 
+	employee := dao.GetById(EmpId)
 	employee.Status = Status
 
 	err := dao.Update(employee)

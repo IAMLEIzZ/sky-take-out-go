@@ -21,14 +21,13 @@ type Employee struct {
 }
 
 func (Employee) TableName() string {
- 
-	return "employee"  // 指定表名为 employee
+
+	return "employee" // 指定表名为 employee
 }
 
-
 type Response struct {
-	Code float64     `json:"code"`
-	Data *Data        `json:"data"`
+	Code float64 `json:"code"`
+	Data *Data   `json:"data"`
 	Msg  *string `json:"msg"`
 }
 

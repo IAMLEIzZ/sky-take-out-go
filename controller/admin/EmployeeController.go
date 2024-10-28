@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"log"
 	"sky-take-out-go/controller/common"
 	"sky-take-out-go/model/dto"
@@ -9,9 +11,6 @@ import (
 	"sky-take-out-go/utils"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // add a employee
@@ -26,14 +25,14 @@ func Save(c *gin.Context) {
 
 	if err != nil {
 		common.Response_Error(c)
-		return 
+		return
 	}
 
 	err = service.Save(employeeDTO)
 
 	if err != nil {
 		common.Response_Error(c)
-		return 
+		return
 	}
 
 	common.Response_Success(c, nil)
@@ -48,46 +47,45 @@ func Page(c *gin.Context) {
 	err := c.ShouldBind(&employeePageQueryDTO)
 
 	if err != nil {
-		common.Response_Error(c)	
-		return  
+		common.Response_Error(c)
+		return
 	}
 
 	employees, total, err1 := service.PageQuery(employeePageQueryDTO)
 
 	if err1 != nil {
 		common.Response_Error(c)
-		return  
+		return
 	}
 
 	common.Response_Success(
 		c, common.EmpList{
-			Total: total,
-			Records: employees,	
-	})
-}	
+			Total:   total,
+			Records: employees,
+		})
+}
 
 type Cliams struct {
-	EmpId uint64	`json:"empId"`
+	EmpId uint64 `json:"empId"`
 	jwt.RegisteredClaims
-	
 }
 
 // empolyee login
-// Path: /admin/employee/login	
+// Path: /admin/employee/login
 func Login(c *gin.Context) {
 	log.Println("INFO: " + "Employee Login")
 	employeeLoginDTO := dto.EmployeeLoginDTO{}
-	err := c.ShouldBind(&employeeLoginDTO) 	
+	err := c.ShouldBind(&employeeLoginDTO)
 
 	if err != nil {
-		common.Response_Error(c) 
-		return 
+		common.Response_Error(c)
+		return
 	}
 
 	employee, err := service.Login(employeeLoginDTO)
 	if err != nil {
 		common.Response_Error(c)
-		return 
+		return
 	}
 	// JWT
 	JwtTTL := time.Now().Add(7200000 * time.Second)
@@ -98,17 +96,17 @@ func Login(c *gin.Context) {
 		},
 	}
 	jwtAdminSecretKey := dto.JwtAdminSecretKey
-	// token 生成	
+	// token 生成
 	tokenString, err := utils.CreateJwt(claim, jwtAdminSecretKey)
 	if err != nil {
 		common.Response_Error(c)
 		return
 	}
 	employeeLoginVO := vo.EmployeeLoginVO{
-		ID: int64(employee.ID),
+		ID:       int64(employee.ID),
 		UserName: employee.Username,
-		Name: employee.Name,
-		Token: tokenString,
+		Name:     employee.Name,
+		Token:    tokenString,
 	}
 
 	common.Response_Success(c, &employeeLoginVO)
@@ -122,7 +120,7 @@ func GetById(c *gin.Context) {
 	empId, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil {
 		common.Response_Error(c)
-		return 
+		return
 	}
 	employee := service.GetById(empId)
 
@@ -130,7 +128,7 @@ func GetById(c *gin.Context) {
 	if employee.IDNumber == "" {
 		// no user
 		common.Response_Error(c)
-		return 
+		return
 	}
 	// if is not nil
 	common.Response_Success(c, employee)
@@ -140,30 +138,30 @@ func GetById(c *gin.Context) {
 // Set Employee Status
 // PATH: /admin/employee/status/:status
 func StartOrStop(c *gin.Context) {
-	log.Println("INFO: " + "Set Employee Status")	
+	log.Println("INFO: " + "Set Employee Status")
 	status, err1 := strconv.Atoi(c.Param("status"))
 	empId, err2 := strconv.ParseUint(c.Query("id"), 10, 64)
-	if err1 != nil || err2 != nil{
+	if err1 != nil || err2 != nil {
 		common.Response_Error(c)
-		return	
+		return
 	}
 
 	err := service.StartOrStop(status, empId)
-	
+
 	if err != nil {
 		common.Response_Error(c)
-		return	
+		return
 	}
 
 	common.Response_Success(c, nil)
 
 }
 
-// Edit Password 
+// Edit Password
 // PATH: /admin/employee/editPassword
 func EditPassword(c *gin.Context) {
 	log.Println("INFO: " + "Edit Password")
-	var empEditPasswordDTO dto.EmpNewAndOldPwDTO 
+	var empEditPasswordDTO dto.EmpNewAndOldPwDTO
 	// here request just oldPw and newPw
 	// so need get EmpID
 	err := c.ShouldBindJSON(&empEditPasswordDTO)
@@ -171,19 +169,19 @@ func EditPassword(c *gin.Context) {
 		empEditPasswordDTO.EmpId = empId.(uint64)
 	} else {
 		common.Response_Error(c)
-		return	
+		return
 	}
 
 	if err != nil {
 		common.Response_Error(c)
-		return	
+		return
 	}
 
 	err = service.EditPassword(&empEditPasswordDTO)
 
 	if err != nil {
 		common.Response_Error(c)
-		return	
+		return
 	}
 
 	common.Response_Success(c, nil)
