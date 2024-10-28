@@ -26,57 +26,13 @@ func (Employee) TableName() string {
 }
 
 
-/*
-
-{
-    "code": 0,
-    "data": {
-        "records": [
-            {
-                "id": 2,
-                "username": "zhangsan",
-                "name": "张三",
-                "password": "e10adc3949ba59abbe56e057f20f883e",
-                "phone": "13556788991",
-                "sex": "1",
-                "idNumber": "123456789012345678",
-                "status": 1,
-                "createTime": "2024-10-02T21:02:39+08:00",
-                "updateTime": "2024-10-02T21:02:39+08:00",
-                "createUser": 10,
-                "updateUser": 10
-            }
-        ],
-        "total": 1
-    },
-    "msg": null
+type Response struct {
+	Code float64     `json:"code"`
+	Data *Data        `json:"data"`
+	Msg  *string `json:"msg"`
 }
 
-*/
-
-/*
-
-{
-    "code": 1,
-    "msg": null,
-    "data": {
-        "total": 1,
-        "records": [
-            {
-                "id": 2,
-                "username": "zhangsan",
-                "name": "张三",
-                "password": "e10adc3949ba59abbe56e057f20f883e",
-                "phone": "13556788991",
-                "sex": "1",
-                "idNumber": "123456789012345678",
-                "status": 1,
-                "createTime": "2024-10-02 21:02",
-                "updateTime": "2024-10-02 21:02",
-                "createUser": 10,
-                "updateUser": 10
-            }
-        ]
-    }
+type Data struct {
+	Records []Employee `json:"records"`
+	Total   int64      `json:"total"`
 }
-*/

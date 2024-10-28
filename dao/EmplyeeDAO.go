@@ -54,3 +54,20 @@ func GetByUsername(username string) (entity.Employee) {
 
 	return employee
 }
+
+func GetById(EmpId uint64) *entity.Employee {
+	emplyee := &entity.Employee{}
+
+	query := db.DB.Model(&entity.Employee{})
+
+	query.Where("id = ?", EmpId).First(&emplyee)
+
+	return emplyee
+}
+
+func Update(employee *entity.Employee) error {
+	query := db.DB.Debug().Model(&entity.Employee{})
+	// when status = 0
+	err := query.Where("id = ?", employee.ID).Select("status").Updates(employee)
+	return err.Error
+}

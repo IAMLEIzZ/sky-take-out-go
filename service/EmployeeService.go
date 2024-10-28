@@ -62,3 +62,21 @@ func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error){
 	return employee, nil
 
 }
+
+func GetById(EmpId uint64) *entity.Employee {
+	employee := dao.GetById(EmpId)
+
+	return employee
+}
+
+func StartOrStop(Status int, EmpId uint64) error {
+	// equal a update 
+	employee := &entity.Employee{
+		ID: EmpId,
+		Status: Status,
+	}
+
+	err := dao.Update(employee)
+
+	return err
+}

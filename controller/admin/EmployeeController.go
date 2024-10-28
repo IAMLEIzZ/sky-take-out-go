@@ -7,6 +7,8 @@ import (
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/vo"
 	"sky-take-out-go/service"
+	"sky-take-out-go/utils"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -24,16 +26,28 @@ func Save(c *gin.Context) {
 	err := c.ShouldBind(&employeeDTO) // 将传入的 JSON 对象赋值给 DTO 对象
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Msg: nil,
+			Data: nil,
+		})
 	}
 
 	err = service.Save(employeeDTO)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[map[string]interface{}](err.Error()))
+		c.JSON(http.StatusInternalServerError,  common.Response{
+			Code: 0,
+			Msg: nil,
+			Data: nil,
+		})
 	}
 
-	c.JSON(http.StatusOK, common.Success[map[string]interface{}]())
+	c.JSON(http.StatusOK,  common.Response{
+		Code: 0,
+		Msg: nil,
+		Data: nil,
+	})
 
 }
 
@@ -46,23 +60,33 @@ func Page(c *gin.Context) {
 	err := c.ShouldBind(&employeePageQueryDTO)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,		
+			Msg: nil,
+		})
+		return  
 	}
 
 	employees, total, err1 := service.PageQuery(employeePageQueryDTO)
 
 	if err1 != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return  
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 1,
-		"msg": nil,
-		"data": gin.H{
-			"total": total,
-			"records": employees,
+	c.JSON(http.StatusOK, common.Response{
+		Code: 1,
+		Msg: nil,
+		Data: common.EmpList{
+			Total: total,
+			Records: employees,	
 		},
-    })
+	})
 }	
 
 type Cliams struct {
@@ -79,30 +103,40 @@ func Login(c *gin.Context) {
 	err := c.ShouldBind(&employeeLoginDTO) 	
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Msg: nil,
+			Data: nil,
+		}) 
 		return 
 	}
 
 	employee, err := service.Login(employeeLoginDTO)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Msg: nil,
+			Data: nil,
+		})
 		return 
 	}
 	// JWT
-	JwtAdminSecretKey := "itcast"
 	JwtTTL := time.Now().Add(7200000 * time.Second)
-
-	claim := &Cliams{
+	claim := &dto.JwtClaimDTO_Admin{
 		EmpId: employee.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(JwtTTL),
 		},
 	}
+	jwtAdminSecretKey := dto.JwtAdminSecretKey
 	// token 生成	
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	tokenString, err := token.SignedString([]byte(JwtAdminSecretKey))	
+	tokenString, err := utils.CreateJwt(claim, jwtAdminSecretKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Error[common.H](err.Error()))
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Msg: nil,
+			Data: nil,
+		})
 		return
 	}
 	employeeLoginVO := vo.EmployeeLoginVO{
@@ -112,12 +146,75 @@ func Login(c *gin.Context) {
 		Token: tokenString,
 	}
 
-	c.JSON(http.StatusOK, vo.Response{
+	c.JSON(http.StatusOK, common.Response{
 		Code: 1,
+		Msg: nil,
 		Data: &employeeLoginVO,
+	})
+}
+
+// select user bu uerid
+// PATH: /aadmin/employee/:id
+func GetById(c *gin.Context) {
+	log.Println("INFO: " + "Select User By ID")
+	Id := c.Param("id")
+	empId, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+	}
+	employee := service.GetById(empId)
+
+	// if employee is nil
+	if employee.IDNumber == "" {
+		// no user
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return 
+	}
+	// if is not nil
+	c.JSON(http.StatusOK, common.Response{
+		Code: 1,
+		Data: employee,
 		Msg: nil,
 	})
 }
 
+// Set Employee Status
+// PATH: /admin/employee/status/:status
+func StartOrStop(c *gin.Context) {
+	log.Println("INFO: " + "Set Employee Status")	
+	status, err1 := strconv.Atoi(c.Param("status"))
+	empId, err2 := strconv.ParseUint(c.Query("id"), 10, 64)
+	if err1 != nil || err2 != nil{
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return	
+	}
 
+	err := service.StartOrStop(status, empId)
+	
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, common.Response{
+			Code: 0,
+			Data: nil,
+			Msg: nil,
+		})
+		return	
+	}
 
+	c.JSON(http.StatusOK, common.Response{
+			Code: 1,
+			Data: nil,
+			Msg: nil,
+	})
+}
