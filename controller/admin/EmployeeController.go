@@ -2,7 +2,6 @@ package admin
 
 import (
 	"log"
-	"net/http"
 	"sky-take-out-go/controller/common"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/vo"
@@ -26,29 +25,18 @@ func Save(c *gin.Context) {
 	err := c.ShouldBind(&employeeDTO) // 将传入的 JSON 对象赋值给 DTO 对象
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Msg: nil,
-			Data: nil,
-		})
+		common.Response_Error(c)
+		return 
 	}
 
 	err = service.Save(employeeDTO)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,  common.Response{
-			Code: 0,
-			Msg: nil,
-			Data: nil,
-		})
+		common.Response_Error(c)
+		return 
 	}
 
-	c.JSON(http.StatusOK,  common.Response{
-		Code: 0,
-		Msg: nil,
-		Data: nil,
-	})
-
+	common.Response_Success(c, nil)
 }
 
 // page query
@@ -60,32 +48,21 @@ func Page(c *gin.Context) {
 	err := c.ShouldBind(&employeePageQueryDTO)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,		
-			Msg: nil,
-		})
+		common.Response_Error(c)	
 		return  
 	}
 
 	employees, total, err1 := service.PageQuery(employeePageQueryDTO)
 
 	if err1 != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return  
 	}
 
-	c.JSON(http.StatusOK, common.Response{
-		Code: 1,
-		Msg: nil,
-		Data: common.EmpList{
+	common.Response_Success(
+		c, common.EmpList{
 			Total: total,
 			Records: employees,	
-		},
 	})
 }	
 
@@ -103,21 +80,13 @@ func Login(c *gin.Context) {
 	err := c.ShouldBind(&employeeLoginDTO) 	
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Msg: nil,
-			Data: nil,
-		}) 
+		common.Response_Error(c) 
 		return 
 	}
 
 	employee, err := service.Login(employeeLoginDTO)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Msg: nil,
-			Data: nil,
-		})
+		common.Response_Error(c)
 		return 
 	}
 	// JWT
@@ -132,11 +101,7 @@ func Login(c *gin.Context) {
 	// token 生成	
 	tokenString, err := utils.CreateJwt(claim, jwtAdminSecretKey)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Msg: nil,
-			Data: nil,
-		})
+		common.Response_Error(c)
 		return
 	}
 	employeeLoginVO := vo.EmployeeLoginVO{
@@ -146,11 +111,7 @@ func Login(c *gin.Context) {
 		Token: tokenString,
 	}
 
-	c.JSON(http.StatusOK, common.Response{
-		Code: 1,
-		Msg: nil,
-		Data: &employeeLoginVO,
-	})
+	common.Response_Success(c, &employeeLoginVO)
 }
 
 // select user bu uerid
@@ -160,30 +121,20 @@ func GetById(c *gin.Context) {
 	Id := c.Param("id")
 	empId, err := strconv.ParseUint(Id, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
+		return 
 	}
 	employee := service.GetById(empId)
 
 	// if employee is nil
 	if employee.IDNumber == "" {
 		// no user
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return 
 	}
 	// if is not nil
-	c.JSON(http.StatusOK, common.Response{
-		Code: 1,
-		Data: employee,
-		Msg: nil,
-	})
+	common.Response_Success(c, employee)
+
 }
 
 // Set Employee Status
@@ -193,30 +144,19 @@ func StartOrStop(c *gin.Context) {
 	status, err1 := strconv.Atoi(c.Param("status"))
 	empId, err2 := strconv.ParseUint(c.Query("id"), 10, 64)
 	if err1 != nil || err2 != nil{
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return	
 	}
 
 	err := service.StartOrStop(status, empId)
 	
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return	
 	}
 
-	c.JSON(http.StatusOK, common.Response{
-			Code: 1,
-			Data: nil,
-			Msg: nil,
-	})
+	common.Response_Success(c, nil)
+
 }
 
 // Edit Password 
@@ -230,40 +170,23 @@ func EditPassword(c *gin.Context) {
 	if empId, exsits := c.Get("EmpId"); exsits {
 		empEditPasswordDTO.EmpId = empId.(uint64)
 	} else {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return	
 	}
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return	
 	}
 
 	err = service.EditPassword(&empEditPasswordDTO)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, common.Response{
-			Code: 0,
-			Data: nil,
-			Msg: nil,
-		})
+		common.Response_Error(c)
 		return	
 	}
 
-	c.JSON(http.StatusOK, common.Response{
-		Code: 1,
-		Data: nil,
-		Msg: nil,
-	})
-
+	common.Response_Success(c, nil)
 }
 
 // User Logout
@@ -271,9 +194,6 @@ func EditPassword(c *gin.Context) {
 func EmpLogout(c *gin.Context) {
 	log.Println("INFO: " + "User Logout...")
 
-	c.JSON(http.StatusOK, common.Response{
-		Code: 1,
-		Data: nil,
-		Msg: nil,
-	})
+	common.Response_Success(c, nil)
+
 }
