@@ -1,4 +1,4 @@
-package dao
+package employeedao
 
 import (
 	"sky-take-out-go/db"

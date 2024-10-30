@@ -1,9 +1,9 @@
-package service
+package employeeservice 
 
 import (
 	"errors"
 	"log"
-	"sky-take-out-go/dao"
+	"sky-take-out-go/dao/employeedao"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
 	"sky-take-out-go/utils"
@@ -38,12 +38,12 @@ func Save(employeeDTO *dto.EmployeeDTO, c *gin.Context) error {
 		return errors.New("获取当前用户信息失败")
 	}
 
-	return dao.Save(employee)
+	return employeedao.Save(employee)
 }
 
 func PageQuery(employeePageQueryDTO dto.EmployeePageQueryDTO) ([]entity.Employee, int64, error) {
 
-	employs, total, err := dao.PageQuery(employeePageQueryDTO)
+	employs, total, err := employeedao.PageQuery(employeePageQueryDTO)
 
 	return employs, total, err
 }
@@ -52,7 +52,7 @@ func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error) {
 	username := employeeLoginDTO.Username
 	password := employeeLoginDTO.Password
 
-	employee := dao.GetByUsername(username)
+	employee := employeedao.GetByUsername(username)
 	// id nil => employee.IDNumber is ""
 	if employee.IDNumber == "" {
 		return employee, errors.New("账号不存在")
@@ -75,14 +75,14 @@ func Login(employeeLoginDTO dto.EmployeeLoginDTO) (entity.Employee, error) {
 }
 
 func GetById(EmpId uint64) *entity.Employee {
-	employee := dao.GetById(EmpId)
+	employee := employeedao.GetById(EmpId)
 
 	return employee
 }
 
 func StartOrStop(Status int, EmpId uint64, c *gin.Context) error {
 	// equal a update
-	employee := dao.GetById(EmpId)
+	employee := employeedao.GetById(EmpId)
 	employee.Status = Status
 	employee.UpdateTime = time.Now()
 
@@ -92,7 +92,7 @@ func StartOrStop(Status int, EmpId uint64, c *gin.Context) error {
 		return errors.New("获取用户信息失败")
 	}
 
-	err := dao.Update(employee)
+	err := employeedao.Update(employee)
 
 	return err
 }
@@ -100,7 +100,7 @@ func StartOrStop(Status int, EmpId uint64, c *gin.Context) error {
 func EditPassword(empNewAndOldPwDTO *dto.EmpNewAndOldPwDTO) error {
 	// this obj have oldpw newpw and id
 	// check oldpw
-	employee := dao.GetById(empNewAndOldPwDTO.EmpId)
+	employee := employeedao.GetById(empNewAndOldPwDTO.EmpId)
 
 	oldPw := utils.Md5DigestAsHex(empNewAndOldPwDTO.OldPassword)
 	if oldPw != employee.Password {
@@ -110,13 +110,13 @@ func EditPassword(empNewAndOldPwDTO *dto.EmpNewAndOldPwDTO) error {
 	// update this emp
 	employee.Password = utils.Md5DigestAsHex(empNewAndOldPwDTO.NewPassword)
 	employee.UpdateTime = time.Now()
-	err := dao.Update(employee)
+	err := employeedao.Update(employee)
 
 	return err
 }
  
 func Edit(employeeDTO dto.EmployeeDTO, c *gin.Context) error {
-	employee := dao.GetById(uint64(employeeDTO.ID))
+	employee := employeedao.GetById(uint64(employeeDTO.ID))
 
 	if employee.IDNumber == "" {
 		return errors.New("员工 ID 有误，请联系管理员")
@@ -136,5 +136,5 @@ func Edit(employeeDTO dto.EmployeeDTO, c *gin.Context) error {
 	}
 
 	employee.UpdateTime = time.Now()
-	return dao.Update(employee)
+	return employeedao.Update(employee)
 }

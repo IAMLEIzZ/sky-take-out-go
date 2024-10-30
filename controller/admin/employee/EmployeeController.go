@@ -7,7 +7,7 @@ import (
 	"sky-take-out-go/controller/common"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/vo"
-	"sky-take-out-go/service"
+	"sky-take-out-go/service/employeeservice"
 	"sky-take-out-go/utils"
 	"strconv"
 	"time"
@@ -27,7 +27,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	err = service.Save(&employeeDTO, c)
+	err = employeeservice.Save(&employeeDTO, c)
 
 	if err != nil {
 		common.Response_Error(c)
@@ -50,7 +50,7 @@ func Page(c *gin.Context) {
 		return
 	}
 
-	employees, total, err1 := service.PageQuery(employeePageQueryDTO)
+	employees, total, err1 := employeeservice.PageQuery(employeePageQueryDTO)
 
 	if err1 != nil {
 		common.Response_Error(c)
@@ -81,7 +81,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	employee, err := service.Login(employeeLoginDTO)
+	employee, err := employeeservice.Login(employeeLoginDTO)
 	if err != nil {
 		common.Response_Error(c)
 		return
@@ -121,7 +121,7 @@ func GetById(c *gin.Context) {
 		common.Response_Error(c)
 		return
 	}
-	employee := service.GetById(empId)
+	employee := employeeservice.GetById(empId)
 
 	// if employee is nil
 	if employee.IDNumber == "" {
@@ -145,7 +145,7 @@ func StartOrStop(c *gin.Context) {
 		return
 	}
 
-	err := service.StartOrStop(status, empId, c)
+	err := employeeservice.StartOrStop(status, empId, c)
 
 	if err != nil {
 		common.Response_Error(c)
@@ -176,7 +176,7 @@ func EditPassword(c *gin.Context) {
 		return
 	}
 
-	err = service.EditPassword(&empEditPasswordDTO)
+	err = employeeservice.EditPassword(&empEditPasswordDTO)
 
 	if err != nil {
 		common.Response_Error(c)
@@ -207,7 +207,7 @@ func Edit(c *gin.Context) {
 		return
 	}
 
-	err = service.Edit(employeeDTO, c)
+	err = employeeservice.Edit(employeeDTO, c)
 
 	if err != nil {
 		common.Response_Error(c)
