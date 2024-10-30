@@ -10,14 +10,15 @@ import (
 
 func InitRouter() *gin.Engine {
 	router := gin.Default()
-	//  新增员工路由
-	router.POST("/admin/employee", JwtHandler(), admin.Save)
-	router.GET("/admin/employee/page", JwtHandler(), admin.Page)
-	router.POST("/admin/employee/login", admin.Login)
-	router.GET("/admin/employee/:id", JwtHandler(), admin.GetById)
-	router.POST("/admin/employee/status/:status", JwtHandler(), admin.StartOrStop)
-	router.PUT("/admin/employee/editPassword", JwtHandler(), admin.EditPassword)
-	router.POST("/admin/employee/logout", JwtHandler(), admin.EmpLogout)
+	
+	router.POST("/admin/employee", JwtHandler(), admin.Save)	//  新增员工路由
+	router.GET("/admin/employee/page", JwtHandler(), admin.Page)	//  分页查询员工路由
+	router.POST("/admin/employee/login", admin.Login)	//  员工登录路由
+	router.GET("/admin/employee/:id", JwtHandler(), admin.GetById)		// 根据ID查询员工路由	
+	router.POST("/admin/employee/status/:status", JwtHandler(), admin.StartOrStop)		// 启用或停用员工路由
+	router.PUT("/admin/employee/editPassword", JwtHandler(), admin.EditPassword)	 // 修改密码路由
+	router.POST("/admin/employee/logout", JwtHandler(), admin.EmpLogout)		// 退出登录路由
+	router.PUT("/admin/employee", JwtHandler(), admin.Edit)		// 修改员工信息路由
 
 	return router
 }

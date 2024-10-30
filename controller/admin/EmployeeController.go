@@ -16,7 +16,6 @@ import (
 // add a employee
 // Path: admin/emplyee
 func Save(c *gin.Context) {
-
 	log.Println("INFO: " + "Add a employee")
 
 	employeeDTO := dto.EmployeeDTO{}
@@ -28,7 +27,7 @@ func Save(c *gin.Context) {
 		return
 	}
 
-	err = service.Save(employeeDTO)
+	err = service.Save(&employeeDTO, c)
 
 	if err != nil {
 		common.Response_Error(c)
@@ -146,7 +145,7 @@ func StartOrStop(c *gin.Context) {
 		return
 	}
 
-	err := service.StartOrStop(status, empId)
+	err := service.StartOrStop(status, empId, c)
 
 	if err != nil {
 		common.Response_Error(c)
@@ -194,4 +193,26 @@ func EmpLogout(c *gin.Context) {
 
 	common.Response_Success(c, nil)
 
+}
+
+// Edit Employee Info
+// PATH: /admin/employee
+func Edit(c *gin.Context) {
+	log.Println("INFO: " + "Edit Employee Info")
+	employeeDTO := dto.EmployeeDTO{}
+	err := c.ShouldBind(&employeeDTO)
+
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	err = service.Edit(employeeDTO, c)
+
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, nil)
 }

@@ -7,10 +7,13 @@ import (
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
 	"sky-take-out-go/utils"
+	"time"
+
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
-func Save(employeeDTO dto.EmployeeDTO) error {
+func Save(employeeDTO *dto.EmployeeDTO, c *gin.Context) error {
 
 	employee := entity.Employee{}
 
@@ -25,6 +28,15 @@ func Save(employeeDTO dto.EmployeeDTO) error {
 	employee.Password = utils.Md5DigestAsHex(defaultPassword)
 
 	employee.Status = 1
+	employee.CreateTime = time.Now()
+	employee.UpdateTime = time.Now()
+	
+	if empId, exsits := c.Get("EmpId"); exsits {
+		employee.UpdateUser = empId.(uint64)
+		employee.CreateUser = empId.(uint64)
+	} else {
+		return errors.New("获取当前用户信息失败")
+	}
 
 	return dao.Save(employee)
 }
@@ -68,10 +80,17 @@ func GetById(EmpId uint64) *entity.Employee {
 	return employee
 }
 
-func StartOrStop(Status int, EmpId uint64) error {
+func StartOrStop(Status int, EmpId uint64, c *gin.Context) error {
 	// equal a update
 	employee := dao.GetById(EmpId)
 	employee.Status = Status
+	employee.UpdateTime = time.Now()
+
+	if empId, exsits := c.Get("EmpId"); exsits {
+		employee.UpdateUser = empId.(uint64)
+	} else {
+		return errors.New("获取用户信息失败")
+	}
 
 	err := dao.Update(employee)
 
@@ -90,8 +109,32 @@ func EditPassword(empNewAndOldPwDTO *dto.EmpNewAndOldPwDTO) error {
 
 	// update this emp
 	employee.Password = utils.Md5DigestAsHex(empNewAndOldPwDTO.NewPassword)
-
+	employee.UpdateTime = time.Now()
 	err := dao.Update(employee)
 
 	return err
+}
+ 
+func Edit(employeeDTO dto.EmployeeDTO, c *gin.Context) error {
+	employee := dao.GetById(uint64(employeeDTO.ID))
+
+	if employee.IDNumber == "" {
+		return errors.New("员工 ID 有误，请联系管理员")
+	}
+
+	err := copier.Copy(&employee, employeeDTO)
+
+	if err != nil {
+		log.Println("INFO: Object Copy fail..." + err.Error())
+		return err
+	}
+
+	if empId, exsits := c.Get("EmpId"); exsits {
+		employee.UpdateUser = empId.(uint64)
+	} else {
+		return errors.New("获取用户信息失败")
+	}
+
+	employee.UpdateTime = time.Now()
+	return dao.Update(employee)
 }
