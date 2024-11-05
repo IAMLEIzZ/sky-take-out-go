@@ -34,3 +34,7 @@ func Save(categoryDTO *dto.CategoryDTO, c *gin.Context) error {
 
 	return err
 }
+
+func PageQuery(categoryPageQueryDTO dto.CategoryPageQueryDTO) ([]entity.Category, int64, error) {
+	return categorydao.PageQuery(categoryPageQueryDTO)
+}

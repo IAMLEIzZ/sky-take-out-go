@@ -28,6 +28,7 @@ func InitRouter() *gin.Engine {
 	// 分类管理路由
 	{
 		router.POST("/admin/category", JwtHandler(), category.Save)	//  新增分类路由
+		router.GET("admin/category/page", JwtHandler(), category.Page)	//  分页查询分类路由
 	}
 	return router
 }

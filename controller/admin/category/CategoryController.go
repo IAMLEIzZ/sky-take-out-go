@@ -51,3 +51,31 @@ func Save(c *gin.Context) {
 
 	common.Response_Success(c, nil)
 }
+
+
+// Page Query Category 
+// PATH: admin/category/page
+func Page(c *gin.Context) {
+	log.Println("INFO: " + "Page Query Category")
+	categoryPageQueryDTO := dto.CategoryPageQueryDTO{}
+	err := c.ShouldBindQuery(&categoryPageQueryDTO)
+	
+	if err != nil {
+		log.Println("INFO: " + "Json bind error")
+		common.Response_Error(c)
+		return 
+	}
+
+	categorys, totals, err := categoryservice.PageQuery(categoryPageQueryDTO)  
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return 
+	}
+
+	common.Response_Success(c, common.CategoryList{
+		Total: totals,
+		Records: categorys,
+	})
+}
