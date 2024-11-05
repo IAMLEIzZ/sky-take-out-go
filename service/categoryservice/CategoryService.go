@@ -38,3 +38,11 @@ func Save(categoryDTO *dto.CategoryDTO, c *gin.Context) error {
 func PageQuery(categoryPageQueryDTO dto.CategoryPageQueryDTO) ([]entity.Category, int64, error) {
 	return categorydao.PageQuery(categoryPageQueryDTO)
 }
+
+func GetById(Id uint64) *entity.Category {
+	return categorydao.GetByID(Id)
+}
+
+func DeleteById(Id uint64) error {
+	return categorydao.DeleteById(Id)
+}

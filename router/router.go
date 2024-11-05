@@ -28,7 +28,9 @@ func InitRouter() *gin.Engine {
 	// 分类管理路由
 	{
 		router.POST("/admin/category", JwtHandler(), category.Save)	//  新增分类路由
-		router.GET("admin/category/page", JwtHandler(), category.Page)	//  分页查询分类路由
+		router.GET("/admin/category/page", JwtHandler(), category.Page)	//  分页查询分类路由
+		router.DELETE("/admin/category", JwtHandler(), category.DeleteById)  // 根据 ID 删除菜品分类
+
 	}
 	return router
 }

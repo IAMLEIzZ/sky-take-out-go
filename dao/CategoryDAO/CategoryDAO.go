@@ -49,3 +49,22 @@ func PageQuery(categoryPageQueryDTO dto.CategoryPageQueryDTO) ([]entity.Category
 	err := query.Offset((page - 1) * size).Limit(size).Find(&categories).Error
 	return categories, total, err	
 }
+
+func GetByID(Id uint64) *entity.Category {
+	category := &entity.Category{}
+
+	query := db.DB.Debug().Model(&entity.Category{})
+
+	query.Where("id = ?", Id).First(category)
+
+	return category
+}
+
+func DeleteById(Id uint64) error {
+
+	query := db.DB.Debug().Model(&entity.Category{})
+
+	res := query.Delete(&entity.Category{}, Id)
+
+	return res.Error
+}

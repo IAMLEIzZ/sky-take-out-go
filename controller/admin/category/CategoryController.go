@@ -79,3 +79,52 @@ func Page(c *gin.Context) {
 		Records: categorys,
 	})
 }
+
+// // select category by id
+// // PATH: admin/category/:id
+// func GetById(c *gin.Context) {
+// 	log.Println("INFO: " + "Select Category By Id")
+// 	Id := c.Param("id")
+// 	categoryId, err := strconv.ParseUint(Id, 10, 64)
+
+// 	if err != nil {
+// 		log.Println("ERROR: " + err.Error())
+// 		common.Response_Error(c)
+// 		return
+// 	}
+
+// 	category := categoryservice.GetById(categoryId)
+
+// 	// 如果 category 是空
+// 	if category.Name == "" {
+// 		common.Response_Error(c)
+// 		return
+// 	}
+
+// 	common.Response_Success(c, category)
+// }
+
+// Delete By CateId
+// PATH: admin/category
+func DeleteById(c *gin.Context) {
+	log.Println("INFO: " + "Delete Category By Id")
+	Id := c.Query("id")
+
+	categoryId, err := strconv.ParseUint(Id, 10, 64)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return 
+	}
+
+	err = categoryservice.DeleteById(categoryId)
+
+	if err != nil {
+		common.Response_Error(c)
+		return 
+	}
+
+	log.Println("INFO: Successfully deleted category")
+	common.Response_Success(c, nil)
+}
