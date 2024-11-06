@@ -163,3 +163,24 @@ func StartOrStop(c *gin.Context) {
 
 	common.Response_Success(c, nil)
 }
+
+// Get Category By Id
+// PATH: /admin/category
+func GetById(c *gin.Context) {
+	log.Println("INFO: " + "Get Category By Id")
+	Id := c.Query("id")
+	categoryId, err := strconv.ParseUint(Id, 10, 64)
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+	category := categoryservice.GetById(categoryId)
+
+	if category.Name == "" {
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, category)
+}
