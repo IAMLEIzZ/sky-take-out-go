@@ -4,9 +4,8 @@ import (
 	"log"
 	"sky-take-out-go/controller/common"
 	"sky-take-out-go/model/dto"
-	"strconv"
-
 	"sky-take-out-go/service/categoryservice"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -80,30 +79,6 @@ func Page(c *gin.Context) {
 	})
 }
 
-// // select category by id
-// // PATH: admin/category/:id
-// func GetById(c *gin.Context) {
-// 	log.Println("INFO: " + "Select Category By Id")
-// 	Id := c.Param("id")
-// 	categoryId, err := strconv.ParseUint(Id, 10, 64)
-
-// 	if err != nil {
-// 		log.Println("ERROR: " + err.Error())
-// 		common.Response_Error(c)
-// 		return
-// 	}
-
-// 	category := categoryservice.GetById(categoryId)
-
-// 	// 如果 category 是空
-// 	if category.Name == "" {
-// 		common.Response_Error(c)
-// 		return
-// 	}
-
-// 	common.Response_Success(c, category)
-// }
-
 // Delete By CateId
 // PATH: admin/category
 func DeleteById(c *gin.Context) {
@@ -126,5 +101,40 @@ func DeleteById(c *gin.Context) {
 	}
 
 	log.Println("INFO: Successfully deleted category")
+	common.Response_Success(c, nil)
+}
+
+// UpDate Category
+// PATH: /admin/category
+func Update(c *gin.Context) {
+	log.Println("INFO: " + "Update Category")
+	categoryDtoTemp:= &dto.CategoryDTOTemp{}
+	err := c.ShouldBind(categoryDtoTemp)	// bind temp json
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return 
+	}
+	// trans dtotemp to dto
+	sortTmp, err := strconv.ParseInt(categoryDtoTemp.Sort, 10, 64)
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+	// create new dto
+	categoryDto := &dto.CategoryDTO{
+		ID: categoryDtoTemp.ID,
+		Name: categoryDtoTemp.Name,
+		Sort: sortTmp,
+	}
+	err = categoryservice.Update(c, categoryDto)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return 
+	}
+
 	common.Response_Success(c, nil)
 }

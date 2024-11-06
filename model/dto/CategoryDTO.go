@@ -14,7 +14,7 @@ type CategoryDTO struct {
 // CategoryDTOTemp 中间类, 用于接收前端传递的数据，然后将数据转换为CategoryDTO
 type CategoryDTOTemp struct {
     // 分类ID  
-    ID                   string `json:"id,omitempty"`
+    ID                   int64 `json:"id,omitempty"`
     // 分类名称
     Name                 string `json:"name"`
     // 排序，按照升序排序

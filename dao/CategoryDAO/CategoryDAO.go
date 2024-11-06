@@ -4,7 +4,6 @@ import (
 	"sky-take-out-go/db"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
-
 	"github.com/spf13/cast"
 )
 
@@ -67,4 +66,11 @@ func DeleteById(Id uint64) error {
 	res := query.Delete(&entity.Category{}, Id)
 
 	return res.Error
+}
+
+func Update(category *entity.Category) error {
+	query := db.DB.Debug().Model(&entity.Category{})
+
+	err := query.Where("id = ?", category.ID).Select("*").Updates(category)
+	return err.Error
 }

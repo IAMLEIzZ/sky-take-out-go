@@ -2,11 +2,11 @@ package categoryservice
 
 import (
 	"errors"
+	"log"
 	"sky-take-out-go/dao/categorydao"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
 	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
@@ -45,4 +45,29 @@ func GetById(Id uint64) *entity.Category {
 
 func DeleteById(Id uint64) error {
 	return categorydao.DeleteById(Id)
+}
+
+func Update(c *gin.Context, categorydto *dto.CategoryDTO) error {
+	category := categorydao.GetByID(uint64(categorydto.ID))
+
+	if category.Name == "" {
+		return errors.New("分类 ID 有误")
+	}
+	type_id := category.Type
+	err := copier.Copy(&category, categorydto)
+	category.Type = type_id
+
+	if err != nil {
+		log.Println("INFO: Object Copy fail..." + err.Error())
+		return err
+	}
+
+	if cateId, exists := c.Get("EmpId"); exists {
+		category.UpdateUser = cateId.(uint64)
+	} else {
+		return errors.New("获取用户信息失败") 
+	}
+
+	category.UpdateTime = time.Now()
+	return categorydao.Update(category)
 }
