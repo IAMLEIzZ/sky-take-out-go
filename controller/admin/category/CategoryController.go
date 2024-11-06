@@ -184,3 +184,26 @@ func GetById(c *gin.Context) {
 
 	common.Response_Success(c, category)
 }
+
+
+// Get Category List By Type
+// PATH: /admin/category/list
+func GetListByType(c *gin.Context) {
+	log.Println("INFO: " + "Get Category List By Type")
+	categoryType := c.Query("type")
+	typeTmp, err := strconv.ParseInt(categoryType, 10, 64)
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+	categories, err := categoryservice.List(typeTmp)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, categories)
+}

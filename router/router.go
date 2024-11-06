@@ -1,16 +1,24 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"sky-take-out-go/controller/admin/base"
+	"sky-take-out-go/controller/admin/category"
+	"sky-take-out-go/controller/admin/dish"
 	"sky-take-out-go/controller/admin/employee"
 	"sky-take-out-go/model/entity"
 	"sky-take-out-go/utils"
-	"sky-take-out-go/controller/admin/category"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() *gin.Engine {
 	router := gin.Default()
+
+	// 基础路由
+	{
+		router.POST("/admin/common/upload", JwtHandler(), base.Upload)	// 上传文件路由
+	}
 	
 	// 员工管理路由
 	{
@@ -31,7 +39,13 @@ func InitRouter() *gin.Engine {
 		router.GET("/admin/category/page", JwtHandler(), category.Page)	//  分页查询分类路由
 		router.DELETE("/admin/category", JwtHandler(), category.DeleteById)  // 根据 ID 删除菜品分类
 		router.PUT("/admin/category", JwtHandler(), category.Update)	// 修改分类路由
-		router.POST("admin/category/status/:status", JwtHandler(), category.StartOrStop)	// 启用或停用分类路由
+		router.POST("/admin/category/status/:status", JwtHandler(), category.StartOrStop)	// 启用或停用分类路由
+		router.GET("/admin/category/list", JwtHandler(), category.GetListByType)	// 根据 type 查询分类列表
+	}
+
+	// 菜品管理路由
+	{
+		router.POST("/admin/dish", JwtHandler(), dish.Save)	//  新增菜品路由
 	}
 	return router
 }

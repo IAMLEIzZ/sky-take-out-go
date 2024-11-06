@@ -87,3 +87,7 @@ func StartOrStop(status int, Id uint64, c *gin.Context) error {
 	category.UpdateTime = time.Now()
 	return categorydao.Update(category)
 }
+
+func List(cate_type int64) ([]entity.Category, error) {
+	return categorydao.List(cate_type)
+}

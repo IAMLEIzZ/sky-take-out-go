@@ -63,14 +63,24 @@ func DeleteById(Id uint64) error {
 
 	query := db.DB.Debug().Model(&entity.Category{})
 
-	res := query.Delete(&entity.Category{}, Id)
+	err := query.Delete(&entity.Category{}, Id).Error
 
-	return res.Error
+	return err
 }
 
 func Update(category *entity.Category) error {
 	query := db.DB.Debug().Model(&entity.Category{})
 
-	err := query.Where("id = ?", category.ID).Select("*").Updates(category)
-	return err.Error
+	err := query.Where("id = ?", category.ID).Select("*").Updates(category).Error
+	return err
+}
+
+func List(cate_type int64) ([]entity.Category, error) {
+	var categories []entity.Category
+
+	query := db.DB.Debug().Model(&entity.Category{})
+
+	err := query.Where("type = ?", cate_type).Find(&categories).Error
+
+	return categories, err
 }
