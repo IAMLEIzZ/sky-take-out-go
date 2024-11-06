@@ -138,3 +138,28 @@ func Update(c *gin.Context) {
 
 	common.Response_Success(c, nil)
 }
+
+func StartOrStop(c *gin.Context) {
+	log.Println("INFO: " + "Set Category Status")
+	status, err := strconv.Atoi(c.Param("status"))
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+	cateId, err := strconv.ParseUint(c.Query("id"), 10, 64)
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+	err = categoryservice.StartOrStop(status, cateId, c)
+
+	if err != nil {
+		log.Println("ERROR: " + err.Error())
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, nil)
+}

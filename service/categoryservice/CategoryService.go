@@ -71,3 +71,19 @@ func Update(c *gin.Context, categorydto *dto.CategoryDTO) error {
 	category.UpdateTime = time.Now()
 	return categorydao.Update(category)
 }
+
+func StartOrStop(status int, Id uint64, c *gin.Context) error {
+	category := categorydao.GetByID(Id)
+	if category.Name == "" {
+		return errors.New("分类 ID 有误")
+	}
+	category.Status = status
+	if cateId, exists := c.Get("EmpId"); exists {
+		category.UpdateUser = cateId.(uint64)
+	} else {
+		return errors.New("获取用户信息失败") 
+	}
+
+	category.UpdateTime = time.Now()
+	return categorydao.Update(category)
+}

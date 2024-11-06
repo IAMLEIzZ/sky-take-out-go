@@ -31,6 +31,7 @@ func InitRouter() *gin.Engine {
 		router.GET("/admin/category/page", JwtHandler(), category.Page)	//  分页查询分类路由
 		router.DELETE("/admin/category", JwtHandler(), category.DeleteById)  // 根据 ID 删除菜品分类
 		router.PUT("/admin/category", JwtHandler(), category.Update)	// 修改分类路由
+		router.POST("admin/category/status/:status", JwtHandler(), category.StartOrStop)	// 启用或停用分类路由
 	}
 	return router
 }
