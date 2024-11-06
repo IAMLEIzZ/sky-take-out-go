@@ -33,7 +33,7 @@ func SaveWithFlavors(dishdto *dto.DishDTO, c *gin.Context) error {
 		dish.CreateTime = time.Now()
 		dish.UpdateTime = time.Now()
 	} else {
-		return errors.New("Admin not exist")
+		return errors.New("admin not exist")
 	}
 	err = dishdao.Insert(dish, c)
 
