@@ -25,7 +25,7 @@ func SaveWithFlavors(dishdto *dto.DishDTO, c *gin.Context) error {
 		Price: tmp_price,
 		Image: dishdto.Image,
 		Description: dishdto.Description,
-		Status: dishdto.Status,
+		Status: 1,
 	}
 	if empId, exists := c.Get("EmpId"); exists {
 		dish.CreateUser = empId.(uint64)

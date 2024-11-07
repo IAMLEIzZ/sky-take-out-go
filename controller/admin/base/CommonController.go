@@ -3,6 +3,7 @@ package base
 import (
 	"log"
 	"sky-take-out-go/controller/common"
+	"sky-take-out-go/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,18 +15,17 @@ func Upload(c *gin.Context) {
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 		common.Response_Error(c)
-		return
+		return 
 	}
 
 	// TOD：Upload file to OSS
-	// (Temp) Upload file to local
-	err = c.SaveUploadedFile(file, "./upload/"+file.Filename)
+	url, err := utils.UploadFileToOss(file)
 	
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 		common.Response_Error(c)
-		return
+		return 
 	}
 
-	common.Response_Success(c, nil)
+	common.Response_Success(c, url)	
 }

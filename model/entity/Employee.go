@@ -21,7 +21,6 @@ type Employee struct {
 }
 
 func (Employee) TableName() string {
-
 	return "employee" // 指定表名为 employee
 }
 

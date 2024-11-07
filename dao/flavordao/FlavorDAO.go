@@ -8,8 +8,7 @@ import (
 func InsertBatch(flavors []entity.DishFlavor) error {
 	for i := range flavors {
 		err := db.DB.Debug().Model(&entity.DishFlavor{}).Create(&flavors[i])
-
-		if err != nil {
+		if err.Error != nil {
 			return err.Error
 		}
 	}
