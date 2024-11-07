@@ -5,6 +5,9 @@ import (
 	"sky-take-out-go/controller/common"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/service/dishservice"
+	"strconv"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,4 +56,29 @@ func Page(c *gin.Context) {
 		Total: total,
 		Records: dishes,
 	})
+}
+
+// Delete Batch Dish 
+// PATH: /admin/dish
+func Delete(c *gin.Context) {
+	log.Println("INFO: " + "Delete Batch Dish")
+	idsParam := c.Query("ids")
+	// Parser Param to Array
+	idsStr := strings.Split(idsParam, ",")
+	var ids []uint64
+	for _, idStr := range idsStr {
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			common.Response_Error(c)
+			return
+		}
+		ids = append(ids, uint64(id))
+	}
+	// Delete
+	err := dishservice.DeleteBatch(ids)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+	common.Response_Success(c, nil)
 }

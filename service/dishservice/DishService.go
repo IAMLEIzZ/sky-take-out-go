@@ -63,3 +63,8 @@ func PageQuery(dishPageQueryDTO *dto.DishPageQueryDTO) ([]entity.Dish, int64, er
 	dishs, total, err := dishdao.PageQuery(dishPageQueryDTO)
 	return dishs, total, err
 }
+
+func DeleteBatch(ids []uint64) error {
+	err := dishdao.DeleteBatch(ids)
+	return err
+}

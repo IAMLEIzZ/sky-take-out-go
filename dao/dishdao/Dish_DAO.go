@@ -52,6 +52,11 @@ func PageQuery(dishPageQueryDTO *dto.DishPageQueryDTO) ([]entity.Dish, int64, er
 	}
 
 	// query according to the paging requirements
-	err := query.Offset((page - 1) * size).Limit(size).Find(&dishes)
-	return dishes, total, err.Error
+	err := query.Offset((page - 1) * size).Limit(size).Find(&dishes).Error
+	return dishes, total, err
+}
+
+func DeleteBatch(ids []uint64) error {
+	err := db.DB.Debug().Where("id in (?)", ids).Delete(&entity.Dish{}).Error
+	return err
 }
