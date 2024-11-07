@@ -17,6 +17,11 @@ type EmpList struct {
 	Records []entity.Employee `json:"records"`
 }
 
+type DishList struct {
+	Total int64		`json:"total"`
+	Records []entity.Dish 	`json:"records"`
+}
+
 type CategoryList struct {
 	Total   int64              `json:"total"`
 	Records []entity.Category `json:"records"`

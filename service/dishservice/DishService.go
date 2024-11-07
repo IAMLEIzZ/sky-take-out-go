@@ -58,3 +58,8 @@ func SaveWithFlavors(dishdto *dto.DishDTO, c *gin.Context) error {
 
 	return nil
 }
+
+func PageQuery(dishPageQueryDTO *dto.DishPageQueryDTO) ([]entity.Dish, int64, error) {
+	dishs, total, err := dishdao.PageQuery(dishPageQueryDTO)
+	return dishs, total, err
+}

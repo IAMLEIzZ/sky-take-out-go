@@ -32,3 +32,25 @@ func Save(c *gin.Context) {
 
 	common.Response_Success(c, nil)
 }
+
+// Page Query Dish
+// PATH: /admin/dish/page
+func Page(c *gin.Context) {
+	log.Println("INFO: " + "Page Query Dish")
+	dishPageQueryDTO := &dto.DishPageQueryDTO{}
+	err := c.ShouldBind(dishPageQueryDTO)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+	dishes, total, err := dishservice.PageQuery(dishPageQueryDTO)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, common.DishList{
+		Total: total,
+		Records: dishes,
+	})
+}
