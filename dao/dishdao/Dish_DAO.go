@@ -4,6 +4,7 @@ import (
 	"sky-take-out-go/db"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
+	"sky-take-out-go/model/vo"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,4 +60,11 @@ func PageQuery(dishPageQueryDTO *dto.DishPageQueryDTO) ([]entity.Dish, int64, er
 func DeleteBatch(ids []uint64) error {
 	err := db.DB.Debug().Where("id in (?)", ids).Delete(&entity.Dish{}).Error
 	return err
+}
+
+func GetById(id uint64) (*vo.DishVo, error) {
+	dishVo := &vo.DishVo{}
+	query := db.DB.Debug().Model(&entity.Dish{})
+	err := query.Where("id = ?", id).First(dishVo).Error
+	return dishVo, err
 }

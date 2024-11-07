@@ -48,6 +48,7 @@ func InitRouter() *gin.Engine {
 		router.POST("/admin/dish", JwtHandler(), dish.Save)	//  新增菜品路由
 		router.GET("/admin/dish/page", JwtHandler(), dish.Page)	//  分页查询菜品路由
 		router.DELETE("/admin/dish", JwtHandler(), dish.Delete)  // 批量删除菜品
+		router.GET("/admin/dish/:id", JwtHandler(), dish.GetById)		// 根据ID查询菜品路由
 	}
 	return router
 }

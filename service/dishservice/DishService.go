@@ -6,8 +6,10 @@ import (
 	"sky-take-out-go/dao/flavordao"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
+	"sky-take-out-go/model/vo"
 	"strconv"
 	"time"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,4 +69,9 @@ func PageQuery(dishPageQueryDTO *dto.DishPageQueryDTO) ([]entity.Dish, int64, er
 func DeleteBatch(ids []uint64) error {
 	err := dishdao.DeleteBatch(ids)
 	return err
+}
+
+func GetById(id uint64) (*vo.DishVo,  error){
+	dishVo, err := dishdao.GetById(id)
+	return dishVo, err
 }

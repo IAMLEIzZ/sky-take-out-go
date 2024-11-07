@@ -82,3 +82,23 @@ func Delete(c *gin.Context) {
 	}
 	common.Response_Success(c, nil)
 }
+
+// Get Dish By ID
+// PATH: /admin/dish
+func GetById(c *gin.Context) {
+	log.Println("INFO: " + "Get Dish By ID")
+
+	idstr := c.Param("id")
+	id, err := strconv.ParseUint(idstr, 10, 64)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	dishVo, err := dishservice.GetById(id)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+	common.Response_Success(c, dishVo)
+}
