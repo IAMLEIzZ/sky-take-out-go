@@ -14,3 +14,11 @@ func InsertBatch(flavors []entity.DishFlavor) error {
 	}
 	return nil
 }
+
+func DeleteByDishId(dishId uint64) error {
+	err := db.DB.Debug().Where("dish_id = ?", dishId).Delete(&entity.DishFlavor{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

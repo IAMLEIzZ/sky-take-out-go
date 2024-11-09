@@ -4,7 +4,6 @@ import (
 	"sky-take-out-go/db"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
-	"sky-take-out-go/model/vo"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,9 +61,35 @@ func DeleteBatch(ids []uint64) error {
 	return err
 }
 
-func GetById(id uint64) (*vo.DishVo, error) {
-	dishVo := &vo.DishVo{}
-	query := db.DB.Debug().Model(&entity.Dish{})
-	err := query.Where("id = ?", id).First(dishVo).Error
-	return dishVo, err
+func GetById(id uint64) (*entity.Dish, error) {
+	dish := &entity.Dish{}
+	err := db.DB.Debug().Model(&entity.Dish{}).Where("id = ?", id).First(dish).Error
+	if err != nil {
+		return nil, err
+	}
+	var dishFlavors []entity.DishFlavor
+	// select flavors
+	err = db.DB.Debug().Model(&entity.DishFlavor{}).Where("dish_id = ?", id).Find(&dishFlavors).Error
+	if err != nil {
+		return nil, err 
+	}
+	dish.Flavors = dishFlavors 
+
+	return dish, nil
+}
+
+func List(dish *entity.Dish) ([]entity.Dish, error) {
+	dishes := []entity.Dish{}
+	err := db.DB.Debug().Model(&entity.Dish{}).Where(dish).Find(&dishes).Error
+	return dishes, err
+}
+
+func Update(dish *entity.Dish) error {
+	err := db.DB.Debug().Model(&entity.Dish{Id: dish.Id}).Updates(dish).Error
+	return err
+}
+
+func UpdateSatatus(dish *entity.Dish) error {
+	err := db.DB.Debug().Model(&entity.Dish{Id: dish.Id}).Update("status", dish.Status).Error
+	return err
 }

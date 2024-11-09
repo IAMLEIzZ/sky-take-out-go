@@ -95,10 +95,81 @@ func GetById(c *gin.Context) {
 		return
 	}
 
-	dishVo, err := dishservice.GetById(id)
+	dish, err := dishservice.GetById(id)
+	dishVo := &dto.DishDTO{
+		Id: dish.Id,
+		Name: dish.Name,
+		CategoryId: dish.CategoryId,
+		Price: strconv.FormatFloat(dish.Price, 'f', -1, 64),
+		Image: dish.Image,
+		Description: dish.Description,
+		Status: dish.Status,
+		Flavors: dish.Flavors,
+	}
 	if err != nil {
 		common.Response_Error(c)
 		return
 	}
 	common.Response_Success(c, dishVo)
+}
+
+// Get Dish By CategoryID
+// PATH: /admin/dish/list
+func GetByCategoryId(c *gin.Context) {
+	log.Println("INFO: " + "Get Dish By CategoryID")
+	categoryIdStr := c.Query("categoryId")
+	categoryId, err := strconv.ParseUint(categoryIdStr, 10, 64)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	dishes, err := dishservice.List(categoryId)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}	
+
+	common.Response_Success(c, dishes)
+}
+
+// Update Dish
+// PATH: /admin/dish
+func UpdateDish(c *gin.Context) {
+	log.Println("INFO: " + "Update Dish")
+	dishDto := &dto.DishDTO{}
+	err := c.ShouldBindJSON(dishDto)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	err = dishservice.Update(dishDto, c)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, nil)
+}
+
+// Set Dish Status
+// PATH: /admin/dish/status/:status
+func StartOrStop(c *gin.Context) {
+	log.Println("INFO: " + "Set Dish Status")
+	statusStr := c.Param("status")
+	status, err := strconv.Atoi(statusStr)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+	idStr := c.Query("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	err = dishservice.StartOrStop(id, status, c)
+	if err != nil {
+		common.Response_Error(c)
+		return
+	}
+
+	common.Response_Success(c, nil)
 }

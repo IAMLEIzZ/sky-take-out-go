@@ -6,7 +6,6 @@ import (
 	"sky-take-out-go/dao/flavordao"
 	"sky-take-out-go/model/dto"
 	"sky-take-out-go/model/entity"
-	"sky-take-out-go/model/vo"
 	"strconv"
 	"time"
 
@@ -71,7 +70,85 @@ func DeleteBatch(ids []uint64) error {
 	return err
 }
 
-func GetById(id uint64) (*vo.DishVo,  error){
-	dishVo, err := dishdao.GetById(id)
-	return dishVo, err
+func GetById(id uint64) (*entity.Dish,  error){
+	dish, err := dishdao.GetById(id)
+	return dish, err
+}
+
+func List(categoryId uint64) ([]entity.Dish, error) {
+	Dish := &entity.Dish{
+		CategoryId: categoryId,
+		Status: 1,
+	}
+
+	dishes, err := dishdao.List(Dish)
+
+	return dishes, err
+}
+
+func Update(dishdto *dto.DishDTO, c *gin.Context) error {
+	// Update dish && Create dish 
+	price, err := strconv.ParseFloat(dishdto.Price, 64)
+	if err != nil {
+		return err
+	}
+	dish := &entity.Dish{
+		Id: dishdto.Id,
+		Name: dishdto.Name,
+		CategoryId: dishdto.CategoryId,
+		Price: price,
+		Image: dishdto.Image,
+		Description: dishdto.Description,
+		Status: dishdto.Status,
+	}
+	if empId, exists := c.Get("EmpId"); exists {
+		dish.UpdateUser = empId.(uint64)
+		dish.UpdateTime = time.Now()
+	} else {
+		return errors.New("admin not exist")
+	}
+	err = dishdao.Update(dish)
+	if err != nil {
+		return err
+	}
+
+	// Update flavors
+	// Delete All Flavors By DishID
+	err = flavordao.DeleteByDishId(dish.Id)
+	if err != nil {
+		return err
+	}
+
+	dishFlavors := dishdto.Flavors
+	if(len(dishFlavors) > 0) {
+		// Set DishID for Every Flavor
+		for i := range dishFlavors {
+			dishFlavors[i].DishId = dish.Id
+		}
+		// save dish
+		err = flavordao.InsertBatch(dishFlavors)
+
+		if err != nil {
+			return err
+		}
+	}	
+	return nil
+}
+
+func StartOrStop(id uint64, status int, c *gin.Context) error {
+	dish, err := dishdao.GetById(id)
+	if err != nil {
+		return err
+	}
+	dish.Status = status
+
+	if empId, exists := c.Get("EmpId"); exists {
+		dish.UpdateUser = empId.(uint64)
+		dish.UpdateTime = time.Now()
+	} else {
+		return errors.New("admin not exist")
+	}
+
+	err = dishdao.UpdateSatatus(dish)
+	return err
 }

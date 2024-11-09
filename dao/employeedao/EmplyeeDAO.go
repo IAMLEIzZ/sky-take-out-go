@@ -71,3 +71,4 @@ func Update(employee *entity.Employee) error {
 	err := query.Where("id = ?", employee.ID).Select("*").Updates(employee)
 	return err.Error
 }
+

@@ -8,7 +8,6 @@ import (
 	"sky-take-out-go/controller/admin/employee"
 	"sky-take-out-go/model/entity"
 	"sky-take-out-go/utils"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,6 +48,9 @@ func InitRouter() *gin.Engine {
 		router.GET("/admin/dish/page", JwtHandler(), dish.Page)	//  分页查询菜品路由
 		router.DELETE("/admin/dish", JwtHandler(), dish.Delete)  // 批量删除菜品
 		router.GET("/admin/dish/:id", JwtHandler(), dish.GetById)		// 根据ID查询菜品路由
+		router.GET("/admin/dish/list", JwtHandler(), dish.GetByCategoryId)	// 根据分类查询菜品列表
+		router.PUT("/admin/dish", JwtHandler(), dish.UpdateDish)	// 修改菜品路由
+		router.POST("/admin/dish/status/:status", JwtHandler(), dish.StartOrStop)	// 启用或停用菜品路由
 	}
 	return router
 }
