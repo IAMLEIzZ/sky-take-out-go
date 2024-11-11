@@ -95,6 +95,11 @@ func GetDishById(c *gin.Context) {
 	}
 
 	dish, err := service.GetDishById(id)
+	if err != nil {
+		response.Response_Error(c)
+		return
+	}
+
 	dishVo := &request.DishDTO{
 		Id: dish.Id,
 		Name: dish.Name,
@@ -105,10 +110,7 @@ func GetDishById(c *gin.Context) {
 		Status: dish.Status,
 		Flavors: dish.Flavors,
 	}
-	if err != nil {
-		response.Response_Error(c)
-		return
-	}
+
 	response.Response_Success(c, dishVo)
 }
 
