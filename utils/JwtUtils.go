@@ -2,14 +2,14 @@ package utils
 
 import (
 	"fmt"
+	"sky-take-out-go/internal/api/request"
 	"github.com/golang-jwt/jwt/v5"
-	"sky-take-out-go/model/dto"
 )
 
 // Defined a Jwtutils
 
 // Create JwtToken
-func CreateJwt(claim *dto.JwtClaimDTO_Admin, JwtAdminSecretKey []byte) (string, error) {
+func CreateJwt(claim *request.JwtClaimDTO_Admin, JwtAdminSecretKey []byte) (string, error) {
 	// create jwt
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
@@ -23,15 +23,15 @@ func CreateJwt(claim *dto.JwtClaimDTO_Admin, JwtAdminSecretKey []byte) (string, 
 }
 
 // Parse JwtToken
-func ParseToken(tokenString string) (*dto.JwtClaimDTO_Admin, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &dto.JwtClaimDTO_Admin{}, func(token *jwt.Token) (interface{}, error) {
-		return dto.JwtAdminSecretKey, nil
+func ParseToken(tokenString string) (*request.JwtClaimDTO_Admin, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &request.JwtClaimDTO_Admin{}, func(token *jwt.Token) (interface{}, error) {
+		return request.JwtAdminSecretKey, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*dto.JwtClaimDTO_Admin); ok && token.Valid {
+	if claims, ok := token.Claims.(*request.JwtClaimDTO_Admin); ok && token.Valid {
 		return claims, nil
 	} else {
 		return nil, fmt.Errorf("invild token")
