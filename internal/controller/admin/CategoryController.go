@@ -14,32 +14,14 @@ import (
 // PATH: admin/category
 func SaveCate(c *gin.Context) {
 	log.Println("INFO: " + "Add a category")
-	categoryDTOTemp := &request.CategoryDTOTemp{}
-	err := c.ShouldBindJSON(&categoryDTOTemp)
+	categoryDTO := &request.CategoryDTO{}
+	err := c.ShouldBindJSON(&categoryDTO)
 	if err != nil {
 		log.Println("ERROR: " + err.Error())
 		response.Response_Error(c)
 		return
 	}
-
-	// if err == nil
-	// sorttmp, err := strconv.ParseInt(categoryDTOTemp.Sort, 10, 64)
-	// if err != nil {
-	// 	log.Println("ERROR: " + err.Error())
-	// 	common.Response_Error(c)
-	// 	return
-	// }
-	// typeTmp, err := strconv.ParseInt(categoryDTOTemp.Type, 10, 64)
-	// if err != nil {
-	// 	log.Println("ERROR: " + err.Error())
-	// 	common.Response_Error(c)
-	// 	return
-	// }
-	categoryDTO := &request.CategoryDTO{
-		Name: categoryDTOTemp.Name,
-		Sort: categoryDTOTemp.Sort,
-		Type: categoryDTOTemp.Type,
-	}
+	
 	err = service.SaveCate(categoryDTO, c)
 
 	if err != nil {

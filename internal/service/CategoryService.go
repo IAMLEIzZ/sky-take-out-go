@@ -7,22 +7,24 @@ import (
 	"sky-take-out-go/internal/model"
 	"strconv"
 	"time"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
 )
 
 
 func SaveCate(categoryDTO *request.CategoryDTO, c *gin.Context) error {
 
-	category := &model.Category{}
-	err := copier.Copy(category, categoryDTO)
-	if err != nil {
-		return err
+	typ, _ := strconv.Atoi(categoryDTO.Type)
+	sort, _ := strconv.Atoi(categoryDTO.Sort)
+	category := &model.Category{
+		Name: categoryDTO.Name,
+		Type: typ,
+		Sort: sort,
+		Status: 1,
+		CreateTime: time.Now(),
+		UpdateTime: time.Now(),
 	}
 
-	category.Status = 1
-	category.CreateTime = time.Now()
-	category.UpdateTime = time.Now()
 	if empId, exists := c.Get("EmpId"); exists {
 		category.CreateUser = empId.(uint64)
 		category.UpdateUser = empId.(uint64)
@@ -30,7 +32,7 @@ func SaveCate(categoryDTO *request.CategoryDTO, c *gin.Context) error {
 		return errors.New("token is invalid")
 	}
 
-	err = dao.SaveCate(category)
+	err := dao.SaveCate(category)
 
 	return err
 }
