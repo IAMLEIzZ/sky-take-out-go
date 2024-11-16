@@ -58,3 +58,11 @@ func SetmealPageQuery(setmealPageQueryDTO request.SetMealPageQueryDTO) ([]model.
 	setmeals, total, err := dao.SetmealPageQuery(setmealPageQueryDTO)
 	return setmeals, total, err
 }
+
+func DeleteSetmealBatch(ids []uint64) error {
+	// delete setmeal
+	err := dao.DeleteSetmealBatch(ids)
+	// delete setmealdish
+	err = dao.DeleteSetmealDishBatch(ids)
+	return err
+}

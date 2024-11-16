@@ -15,3 +15,8 @@ func InsertBatchSetmealDish(setmealdishlist []model.SetMealDish) error {
 	}
 	return nil
 }
+
+func DeleteSetmealDishBatch(ids []uint64) error {
+	err := db.DB.Debug().Where("setmeal_id in (?)", ids).Delete(&model.SetMealDish{}).Error
+	return err
+}

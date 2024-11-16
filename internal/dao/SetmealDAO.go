@@ -47,3 +47,8 @@ func SetmealPageQuery(setmealPageQueryDTO request.SetMealPageQueryDTO) ([]model.
 	err := query.Offset((page - 1) * size).Limit(size).Find(&setmeals).Error
 	return setmeals, total, err
 }
+
+func DeleteSetmealBatch(ids []uint64) error {
+	err := db.DB.Debug().Where("id in (?)", ids).Delete(&model.SetMeal{}).Error
+	return err
+}

@@ -53,6 +53,7 @@ func InitRouter() *gin.Engine {
 	{
 		router.POST("/admin/setmeal", middleware.JwtHandler(), admin.SaveSetmeal)	//  新增套餐路由
 		router.GET("/admin/setmeal/page", middleware.JwtHandler(), admin.PageQuerySetmeal)	//  分页查询套餐路由
+		router.DELETE("/admin/setmeal", middleware.JwtHandler(), admin.DeleteSetmeal)  // 批量删除套餐
 	}
 	return router
 }
