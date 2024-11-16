@@ -84,3 +84,65 @@ func DeleteSetmeal(c *gin.Context) {
 
 	response.Response_Success(c, nil)
 }
+
+// Update setmeal
+// PATH: /admin/setmeal
+func UpdateSetmeal(c *gin.Context) {
+	log.Println("INFO: " + "Update setmeal")
+	setmealDTO := &request.SetMealDTO{}
+	err := c.ShouldBindJSON(setmealDTO)
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	err = service.UpdateSetmeal(c, setmealDTO)
+
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	response.Response_Success(c, nil)
+}
+
+// Get setmeal by ID
+// PATH: /admin/setmeal/:id
+func GetSetmealById(c *gin.Context) {
+	log.Println("INFO: " + "Get setmeal by ID")
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	setmeal, err := service.GetSetmealById(uint64(id))
+
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	response.Response_Success(c, setmeal)
+}
+
+// Set setmeal status
+// PATH: /admin/setmeal/status/:status
+func SetSetmealStatus(c *gin.Context) {
+	log.Println("INFO: " + "Set setmeal status")
+	statusStr := c.Param("status")
+	status, err := strconv.Atoi(statusStr)
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+	idStr := c.Query("id")
+	id, _ := strconv.ParseUint(idStr, 10, 64)
+	err = service.SetSetmealStatus(status, id, c)
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	response.Response_Success(c, nil)
+}

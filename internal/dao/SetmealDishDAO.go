@@ -20,3 +20,9 @@ func DeleteSetmealDishBatch(ids []uint64) error {
 	err := db.DB.Debug().Where("setmeal_id in (?)", ids).Delete(&model.SetMealDish{}).Error
 	return err
 }
+
+func GetSetmealDishBySetmealId(setmealId uint64) ([]model.SetMealDish, error) {
+	var setmealdishlist []model.SetMealDish
+	err := db.DB.Debug().Where("setmeal_id = ?", setmealId).Find(&setmealdishlist).Error
+	return setmealdishlist, err
+}

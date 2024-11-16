@@ -52,3 +52,19 @@ func DeleteSetmealBatch(ids []uint64) error {
 	err := db.DB.Debug().Where("id in (?)", ids).Delete(&model.SetMeal{}).Error
 	return err
 }
+
+func UpdateSetmeal(setmeal *model.SetMeal) error {
+	err := db.DB.Debug().Model(&model.SetMeal{}).Where("id = ?", setmeal.Id).Updates(setmeal).Error
+	return err
+}
+
+func GetSetmealById(id uint64) (*model.SetMeal, error) {
+	setmeal := &model.SetMeal{}
+	err := db.DB.Debug().Model(&model.SetMeal{}).Where("id = ?", id).First(setmeal).Error
+	return setmeal, err
+}	
+
+func SetSetmealStatus(id uint64, status int) error {
+	err := db.DB.Debug().Model(&model.SetMeal{}).Where("id = ?", id).Update("status", status).Error
+	return err
+}
