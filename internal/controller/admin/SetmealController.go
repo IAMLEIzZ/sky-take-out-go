@@ -28,3 +28,26 @@ func SaveSetmeal(c *gin.Context) {
 
 	response.Response_Success(c, nil)
 }
+
+func PageQuerySetmeal(c *gin.Context) {
+	log.Println("INFO: " + "Page query setmeal")
+	setmealPageQueryDTO := request.SetMealPageQueryDTO{}
+	err := c.ShouldBind(&setmealPageQueryDTO)
+
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	setmeals, total, err := service.SetmealPageQuery(setmealPageQueryDTO)
+
+	if err != nil {
+		response.Response_Error(c)
+		return 
+	}
+
+	response.Response_Success(c, response.SetMealList{
+		SetMeals: setmeals,
+		Total: total,
+	})
+}

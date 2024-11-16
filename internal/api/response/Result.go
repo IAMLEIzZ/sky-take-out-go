@@ -27,6 +27,11 @@ type CategoryList struct {
 	Records []model.Category `json:"records"`
 }
 
+type SetMealList struct {
+	SetMeals []model.SetMeal `json:"records"`
+	Total    int64           `json:"total"`
+}
+
 func Response_Error(c *gin.Context) {
 	c.JSON(http.StatusInternalServerError, Response{
 		Code: 0,

@@ -53,3 +53,8 @@ func AddSetmeal(c *gin.Context, setmealDTO *request.SetMealDTO) error {
 
 	return nil
 }
+
+func SetmealPageQuery(setmealPageQueryDTO request.SetMealPageQueryDTO) ([]model.SetMeal, int64, error) {
+	setmeals, total, err := dao.SetmealPageQuery(setmealPageQueryDTO)
+	return setmeals, total, err
+}

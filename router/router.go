@@ -52,6 +52,7 @@ func InitRouter() *gin.Engine {
 	// 套餐管理路由
 	{
 		router.POST("/admin/setmeal", middleware.JwtHandler(), admin.SaveSetmeal)	//  新增套餐路由
+		router.GET("/admin/setmeal/page", middleware.JwtHandler(), admin.PageQuerySetmeal)	//  分页查询套餐路由
 	}
 	return router
 }
