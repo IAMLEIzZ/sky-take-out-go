@@ -17,8 +17,6 @@ func InsertFlavorBatch(flavors []model.DishFlavor) error {
 
 func DeleteFlavorByDishId(dishId uint64) error {
 	err := db.DB.Debug().Where("dish_id = ?", dishId).Delete(&model.DishFlavor{}).Error
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return err 
 }

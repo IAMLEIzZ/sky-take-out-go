@@ -48,5 +48,10 @@ func InitRouter() *gin.Engine {
 		router.PUT("/admin/dish", middleware.JwtHandler(), admin.UpdateDish)	// 修改菜品路由
 		router.POST("/admin/dish/status/:status", middleware.JwtHandler(), admin.SetDishStatus)	// 启用或停用菜品路由
 	}
+
+	// 套餐管理路由
+	{
+		router.POST("/admin/setmeal", middleware.JwtHandler(), admin.SaveSetmeal)	//  新增套餐路由
+	}
 	return router
 }
