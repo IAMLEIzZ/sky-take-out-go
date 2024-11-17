@@ -3,37 +3,26 @@ package utils
 import (
 	"fmt"
 	"mime/multipart"
-	"os"
 	"strings"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/google/uuid"
-	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
-	Oss struct {
-		Endpoint 	  string `yaml:"endpoint"`
-		AccessKeyId   string `yaml:"accessKeyId"`
-		AccessKeySecret string `yaml:"accessKeySecret"`
-		BucketName string `yaml:"bucketName"`
-	} `yaml:"alioss"`
-}
-
 // LoadConfig 读取并解析 YAML 配置文件
-func LoadConfig(configPath string) (*Config, error) {
-    data, err := os.ReadFile(configPath)
-    if err != nil {
-        return nil, fmt.Errorf("error reading config file: %v", err)
-    }
+// func LoadConfig(configPath string) (*Config, error) {
+//     data, err := os.ReadFile(configPath)
+//     if err != nil {
+//         return nil, fmt.Errorf("error reading config file: %v", err)
+//     }
 
-    var config Config
-    err = yaml.Unmarshal(data, &config)
-    if err != nil {
-        return nil, fmt.Errorf("error parsing config file: %v", err)
-    }
+//     var config Config
+//     err = yaml.Unmarshal(data, &config)
+//     if err != nil {
+//         return nil, fmt.Errorf("error parsing config file: %v", err)
+//     }
 
-    return &config, nil
-}
+//     return &config, nil
+// }
 
 // Upload file to aliyun OSS and return the URL
 func UploadFileToOss(file *multipart.FileHeader) (string, error) {

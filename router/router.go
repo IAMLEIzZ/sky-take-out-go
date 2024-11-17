@@ -58,5 +58,11 @@ func InitRouter() *gin.Engine {
 		router.PUT("/admin/setmeal", middleware.JwtHandler(), admin.UpdateSetmeal)	// 修改套餐路由
 		router.POST("/admin/setmeal/status/:status", middleware.JwtHandler(), admin.SetSetmealStatus)	// 启用或停用套餐路由
 	}
+
+	// 店铺路由
+	{
+		router.PUT("/admin/shop/:status", middleware.JwtHandler(), admin.SetShopStatus)	// 设置店铺状态路由
+		router.GET("/admin/shop/status", middleware.JwtHandler(), admin.GetShopStatus)	// 获取店铺状态路由
+	}
 	return router
 }

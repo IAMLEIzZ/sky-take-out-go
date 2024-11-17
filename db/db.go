@@ -1,8 +1,10 @@
 package db
 
 import (
+	"log"
+
 	"gorm.io/driver/mysql"
-  	"gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -23,7 +25,7 @@ func InitDB() {
 	}), &gorm.Config{})
 
 	if err != nil {
-		panic(err)
+		log.Panic("DataBase Load Config Error: ", err)	
 	}
 
 }
